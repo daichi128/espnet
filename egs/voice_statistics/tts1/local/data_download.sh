@@ -31,3 +31,9 @@ if [ ! -e ${db}/voice_stats/${spk} ]; then
 else
     echo "It seems that corpus is already downloaded. Skipped download."
 fi
+if [ ! -e ${db}/voice_stats/balance_sentences.txt ]; then
+    wget -P ${db}/voice_stats https://raw.githubusercontent.com/voice-statistics/voice-statistics.github.com/master/assets/doc/balance_sentences.txt
+    echo "Successfully finished download of balance_sentences.txt."
+else
+    echo "It seems that balance_sentences.txt is already downloaded. Skipped download."
+fi
