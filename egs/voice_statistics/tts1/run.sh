@@ -92,24 +92,24 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
 
     # Generate the fbank features; by default 80-dimensional fbanks on each frame
     fbankdir=fbank
-    for name in ${org_set}_{parallel100,nonpara30}; do
-        make_fbank.sh --cmd "${train_cmd}" --nj ${nj} \
-            --fs ${fs} \
-            --fmax "${fmax}" \
-            --fmin "${fmin}" \
-            --n_fft ${n_fft} \
-            --n_shift ${n_shift} \
-            --win_length "${win_length}" \
-            --n_mels ${n_mels} \
-            data/${name} \
-            exp/make_fbank/${name} \
-            ${fbankdir}
-    done
+    make_fbank.sh --cmd "${train_cmd}" --nj ${nj} \
+        --fs ${fs} \
+        --fmax "${fmax}" \
+        --fmin "${fmin}" \
+        --n_fft ${n_fft} \
+        --n_shift ${n_shift} \
+        --win_length "${win_length}" \
+        --n_mels ${n_mels} \
+        data/${org_set} \
+        exp/make_fbank/${org_set} \
+        ${fbankdir}
 
     # make a dev set
-    utils/copy_data_dir.sh data/${org_set}_parallel100 data/${train_set}
-    utils/subset_data_dir.sh --first data/${org_set}_nonpara30 15 data/${train_dev}
-    utils/subset_data_dir.sh --last data/${org_set}_nonpara30 15 data/${eval_set}
+    utils/subset_data_dir.sh --first data/${org_set} 90 data/${train_set}
+    utils/subset_data_dir.sh --last data/${org_set} 10 data/${org_set}_dev_eval
+    utils/subset_data_dir.sh --first data/${org_set}_dev_eval 5 data/${train_dev}
+    utils/subset_data_dir.sh --last data/${org_set}_dev_eval 5 data/${eval_set}
+    rm -r data/${org_set}_dev_eval
 
     # use pretrained model cmvn
     cmvn=$(find ${download_dir}/${pretrained_model} -name "cmvn.ark" | head -n 1)
@@ -117,9 +117,9 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
     # dump features for training
     dump.sh --cmd "$train_cmd" --nj ${nj} --do_delta false \
         data/${train_set}/feats.scp ${cmvn} exp/dump_feats/${train_set} ${feat_tr_dir}
-    dump.sh --cmd "$train_cmd" --nj ${nj} --do_delta false \
+    dump.sh --cmd "$train_cmd" --do_delta false \
         data/${train_dev}/feats.scp ${cmvn} exp/dump_feats/${train_dev} ${feat_dt_dir}
-    dump.sh --cmd "$train_cmd" --nj ${nj} --do_delta false \
+    dump.sh --cmd "$train_cmd" --do_delta false \
         data/${eval_set}/feats.scp ${cmvn} exp/dump_feats/${eval_set} ${feat_ev_dir}
 fi
 
