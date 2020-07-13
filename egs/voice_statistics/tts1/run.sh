@@ -49,7 +49,7 @@ download_dir=downloads
 pretrained_model="jsut.24k.phn.transformer"  # see model info in local/pretrained_model_download.sh
 
 # database related
-spk=jvs010  # you can select from jvs{001..100}
+spk=tsuchiya_normal  # you can select from {fujitou,tsuchiya,uemura}_{normal,happy,angry}
 
 # exp tag
 tag="" # tag for managing experiments.
@@ -69,7 +69,7 @@ eval_set="${org_set}_eval"
 
 if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     echo "stage -1: Data Download"
-    local/data_download.sh ${download_dir}
+    local/data_download.sh ${download_dir} ${spk}
     local/pretrained_model_download.sh ${download_dir} ${pretrained_model}
 fi
 
