@@ -173,6 +173,7 @@ if [ ${n_average} -gt 0 ]; then
     model=model.last${n_average}.avg.best
 fi
 outdir=${expdir}/outputs_${model}_$(basename ${decode_config%.*})
+nj=4
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     echo "stage 4: Decoding"
     if [ ${n_average} -gt 0 ]; then
